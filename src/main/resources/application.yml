@@ -1,18 +1,18 @@
-spring:
-  security:
-    oauth2:
-      client:
-        registration: 
-          message_service: 
-            provider: xyz
-            client-id: message_service
-            client-secret: 123
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/{registrationId}
-            scope:
-            - read_message
-            - write_message
-            - delete_message
-        provider:
-          xyz:
-            issuer-uri: http://localhost:8081
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        registration: 
+#          message_service: 
+#            provider: xyz
+#            client-id: message_service
+#            client-secret: 123
+#            authorization-grant-type: authorization_code
+#            redirect-uri: http://localhost:8080/login/oauth2/code/{registrationId}
+#            scope:
+#            - read_message
+#            - write_message
+#            - delete_message
+#        provider:
+#          xyz:
+#            issuer-uri: http://authserver:8081

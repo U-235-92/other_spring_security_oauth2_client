@@ -31,28 +31,29 @@ public class OAuthConfiguration {
 		return httpSecurity.build();
 	}
 	
-//	@Bean
-//	protected ClientRegistrationRepository clientRegistrationRepository() {
-//		ClientRegistration clientRegistration = ClientRegistration
-//				.withRegistrationId("message_service")
-//				.clientId("message_service")
-//				.clientSecret(passwordEncoder().encode("123"))
-//				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-//				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+	@Bean
+	protected ClientRegistrationRepository clientRegistrationRepository() {
+		ClientRegistration clientRegistration = ClientRegistration
+				.withRegistrationId("xyz")
+				.clientId("message_service")
+				.clientSecret(passwordEncoder().encode("123"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 //				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-//				.redirectUri("http://localhost:8080/login/oauth2/code/message_service")
-//				.scope("read_message", "write_message", "delete_message")
-//				.issuerUri("http://localhost:8081")
-//				.authorizationUri("http://localhost:8081/oauth2/authorize")
-//				.tokenUri("http://localhost:8081/oauth2/token")
-//				.jwkSetUri("http://localhost:8081/oauth2/jwks")
-//				.build();
-//		InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository = new InMemoryClientRegistrationRepository(clientRegistration);
-//		return inMemoryClientRegistrationRepository;
-//	}
-//	
-//	@Bean
-//	protected PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
+				.redirectUri("http://localhost:8080/login/oauth2/code/message_service")
+				.scope("read_message", "write_message", "delete_message")
+				.issuerUri("http://authserver:8081")
+				.authorizationUri("http://authserver:8081/oauth2/authorize")
+				.tokenUri("http://authserver:8081/oauth2/token")
+				.jwkSetUri("http://authserver:8081/oauth2/jwks")
+				.userInfoUri("http://authserver:8081/userinfo")
+				.build();
+		InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository = new InMemoryClientRegistrationRepository(clientRegistration);
+		return inMemoryClientRegistrationRepository;
+	}
+	
+	@Bean
+	protected PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
