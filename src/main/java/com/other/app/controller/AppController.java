@@ -34,40 +34,36 @@ public class AppController {
 	private final RestTemplate restTemplate;
 	
 	@ResponseBody
+	@GetMapping("/read_messages")
+	public List<MessageDTO> readMessages() {
+		addBearerTokenToRestTemplate();
+		MessageDTO[] messages = restTemplate.getForObject("http://localhost:8082/app/read_messages", MessageDTO[].class);
+		return List.of(messages);
+	}
+	
+	@ResponseBody
 	@GetMapping("/delete_message/{id}")
 	public String deleteMessage(@PathVariable long id) throws IOException {
-		restTemplate.getInterceptors().add(tokenInterceptor());
-		ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
-		ClientHttpRequest clientHttpRequest = requestFactory.createRequest(URI.create("http://localhost:8082/app/delete_message/" + id), HttpMethod.DELETE);
-		ClientHttpResponse clientHttpResponse = clientHttpRequest.execute();
-		Scanner scanner = new Scanner(clientHttpResponse.getBody());
-		String response = scanner.nextLine();
-		scanner.close();
+		addBearerTokenToRestTemplate();
+		ClientHttpRequest clientHttpRequest = createClientRequest("http://localhost:8082/app/delete_message/" + id, HttpMethod.DELETE);
+		String response = executeRequestAndGetResponse(clientHttpRequest);
 		return response;
 	}
 	
 	@ResponseBody
 	@GetMapping("/write_message/{text}")
 	public String writeMessage(@PathVariable String text) throws IOException {
-		restTemplate.getInterceptors().add(tokenInterceptor());
-		ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
-		ClientHttpRequest clientHttpRequest = requestFactory.createRequest(URI.create("http://localhost:8082/app/write_message"), HttpMethod.POST);
+		addBearerTokenToRestTemplate();
+		ClientHttpRequest clientHttpRequest = createClientRequest("http://localhost:8082/app/write_message", HttpMethod.POST);
 		clientHttpRequest.getHeaders().add("Content-type", "application/json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		clientHttpRequest.getBody().write(objectMapper.writeValueAsString(text).getBytes());
-		ClientHttpResponse clientHttpResponse = clientHttpRequest.execute();
-		Scanner scanner = new Scanner(clientHttpResponse.getBody());
-		String response = scanner.nextLine();
-		scanner.close();
+		String response = executeRequestAndGetResponse(clientHttpRequest);
 		return response;
 	}
 	
-	@ResponseBody
-	@GetMapping("/read_messages")
-	public List<MessageDTO> readMessages() {
+	private void addBearerTokenToRestTemplate() {
 		restTemplate.getInterceptors().add(tokenInterceptor());
-		MessageDTO[] messages = restTemplate.getForObject("http://localhost:8082/app/read_messages", MessageDTO[].class);
-		return List.of(messages);
 	}
 	
 	private ClientHttpRequestInterceptor tokenInterceptor() {
@@ -78,4 +74,19 @@ public class AppController {
 			return execution.execute(request, body);
 		};
 	}
+	
+	private ClientHttpRequest createClientRequest(String uri, HttpMethod httpMethod) throws IOException {
+		ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
+		ClientHttpRequest clientHttpRequest = requestFactory.createRequest(URI.create(uri), httpMethod);
+		return clientHttpRequest;
+	}
+	
+	private String executeRequestAndGetResponse(ClientHttpRequest clientHttpRequest) throws IOException {
+		ClientHttpResponse clientHttpResponse = clientHttpRequest.execute();
+		Scanner scanner = new Scanner(clientHttpResponse.getBody());
+		String response = scanner.nextLine();
+		scanner.close();
+		return response;
+	}
+	
 }
