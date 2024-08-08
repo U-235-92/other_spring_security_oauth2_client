@@ -5,13 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.web.SecurityFilterChain;
 
 import lombok.RequiredArgsConstructor;
@@ -34,14 +33,13 @@ public class OAuthConfiguration {
 	@Bean
 	protected ClientRegistrationRepository clientRegistrationRepository() {
 		ClientRegistration clientRegistration = ClientRegistration
-				.withRegistrationId("xyz")
+				.withRegistrationId("message_service")
 				.clientId("message_service")
-				.clientSecret(passwordEncoder().encode("123"))
+				.clientSecret("123")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-				.redirectUri("http://localhost:8080/login/oauth2/code/message_service")
-				.scope("read_message", "write_message", "delete_message")
+				.redirectUri("http://outh2client:8080/login/oauth2/code/message_service")
+				.scope("read_message", "write_message", "delete_message", OidcScopes.OPENID)
 				.issuerUri("http://authserver:8081")
 				.authorizationUri("http://authserver:8081/oauth2/authorize")
 				.tokenUri("http://authserver:8081/oauth2/token")
@@ -50,10 +48,5 @@ public class OAuthConfiguration {
 				.build();
 		InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository = new InMemoryClientRegistrationRepository(clientRegistration);
 		return inMemoryClientRegistrationRepository;
-	}
-	
-	@Bean
-	protected PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 }

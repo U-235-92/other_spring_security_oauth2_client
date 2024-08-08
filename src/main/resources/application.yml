@@ -8,11 +8,16 @@
 #            client-id: message_service
 #            client-secret: 123
 #            authorization-grant-type: authorization_code
-#            redirect-uri: http://localhost:8080/login/oauth2/code/{registrationId}
+#            redirect-uri: http://outh2client:8080/login/oauth2/code/{registrationId}
 #            scope:
 #            - read_message
 #            - write_message
 #            - delete_message
+#            - openid
 #        provider:
 #          xyz:
 #            issuer-uri: http://authserver:8081
+#            user-info-uri: http://authserver:8081/userinfo
+#            jwk-set-uri: http://authserver:8081/oauth2/jwks
+#            token-uri: http://authserver:8081/oauth2/token
+#            authorization-uri: http://authserver:8081/oauth2/authorize
